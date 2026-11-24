@@ -42,6 +42,18 @@ function validateEntry(entry) {
   if (entry.trim().length === 0) {
     throw new Error('Entry must not be only whitespace.');
   }
+  // The gate is one sentence, not one line: reject leading/trailing
+  // whitespace (it would inflate the character count the judge sees) and
+  // require exactly one sentence-terminating mark, sitting at the end.
+  if (entry !== entry.trim()) {
+    throw new Error('Entry must not start or end with whitespace.');
+  }
+  const terminators = entry.match(/[.!?]/g) ?? [];
+  if (terminators.length !== 1 || !/[.!?]$/.test(entry)) {
+    throw new Error(
+      `Entry must be exactly one sentence, found ${terminators.length} sentence terminator(s).`,
+    );
+  }
 }
 
 validateEntry(ENTRY);
